@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       return new Response(JSON.stringify({ error: 'Invalid credentials' }), { status: 401 });
     }
 
-    cookies().set("auth", "true", {
+    (await cookies()).set("auth", "true", {
       httpOnly: true,
       path: "/",
     });
