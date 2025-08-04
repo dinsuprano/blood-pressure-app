@@ -1,20 +1,27 @@
+// app/api/seed/route.ts
 import { PrismaClient } from '@/generated/prisma';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-async function main() {
-  const hashedPassword = await bcrypt.hash('Intan226@', 10);
+export async function GET() {
+  try {
+    const hashedPassword = await bcrypt.hash('Intan226@', 10);
 
-  await prisma.user.upsert({
-    where: { email: 'dinsuprano@gmail.com' },
-    update: {},
-    create: {
-      email: 'dinsuprano@gmail.com',
-      password: hashedPassword,
-    },
-  });
+    await prisma.user.upsert({
+      where: { email: 'dinsuprano@gmail.com' },
+      update: {},
+      create: {
+        email: 'dinsuprano@gmail.com',
+        password: hashedPassword,
+      },
+    });
 
-  console.log('✅ Admin user seeded');
+    return new Response('✅ Admin user seeded');
+  } catch (error) {
+    console.error('Seeding error:', error);
+    return new Response('❌ Seeding failed', { status: 500 });
+  } finally {
+    await prisma.$disconnect();
+  }
 }
-
