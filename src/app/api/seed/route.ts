@@ -1,6 +1,6 @@
-// src/app/api/seed/route.ts
 import { PrismaClient } from '@/generated/prisma';
 import bcrypt from 'bcrypt';
+import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
@@ -17,10 +17,10 @@ export async function GET() {
       },
     });
 
-    return new Response('✅ Admin user seeded');
-  } catch (error: any) {
+    return NextResponse.json({ message: '✅ Admin user seeded' });
+  } catch (error) {
     console.error('❌ Seeding error:', error);
-    return new Response(`❌ Seeding failed: ${error.message}`, { status: 500 });
+    return NextResponse.json({ error: '❌ Seeding failed' }, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }
