@@ -14,6 +14,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+}
 
 model Record {
   id         Int      @id @default(autoincrement())
@@ -21,6 +26,7 @@ model Record {
   diastolic  Int
   pulse      Int?     // new variable (optional)
   notes      String?
+  person     Int      // 1 for User 1, 2 for User 2
   recordedAt DateTime // new variable (required)
   createdAt  DateTime @default(now())
 }

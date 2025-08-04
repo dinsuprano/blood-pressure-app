@@ -1,4 +1,6 @@
+// app/api/records/route.ts
 import { PrismaClient } from '@/generated/prisma';
+import { NextRequest } from 'next/server';
 
 const prisma = new PrismaClient();
 
@@ -6,10 +8,10 @@ const prisma = new PrismaClient();
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { systolic, diastolic, pulse, notes } = body;
+    const { systolic, diastolic, pulse, notes, person } = body;
 
-    if (!systolic || !diastolic) {
-      return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
+    if (!systolic || !diastolic || !person) {
+      return new Response(JSON.stringify({ error: 'Missing required fields (systolic, diastolic, or person)' }), { status: 400 });
     }
 
     const record = await prisma.record.create({
@@ -19,6 +21,7 @@ export async function POST(req: Request) {
         pulse: pulse ? Number(pulse) : null,
         notes: notes || '',
         recordedAt: new Date(),
+        person: Number(person),
       },
     });
 
@@ -29,12 +32,31 @@ export async function POST(req: Request) {
   }
 }
 
-// GET - Get all records
-export async function GET() {
+// GET - Get records based on 'person' query parameter
+export async function GET(req: NextRequest) {
   try {
-    const records = await prisma.record.findMany({
-      orderBy: { recordedAt: 'desc' },
-    });
+    const { searchParams } = new URL(req.url);
+    const personId = searchParams.get('personId');
+
+    // Import the Record type from your Prisma client if available
+    // Otherwise, you might define a local interface if you need it for stricter type checking,
+    // though Prisma's generated types are usually sufficient.
+    // For now, let's assume `prisma.record.findMany` returns a type that's compatible
+    // with a common `Record` structure or use `any` if a quick fix is needed (less ideal).
+
+    // Corrected line: Explicitly type 'records'
+    let records: Awaited<ReturnType<typeof prisma.record.findMany>>; // Infer type from prisma.record.findMany
+
+    if (personId) {
+      records = await prisma.record.findMany({
+        where: {
+          person: Number(personId),
+        },
+        orderBy: { recordedAt: 'desc' },
+      });
+    } else {
+      records = [];
+    }
 
     return new Response(JSON.stringify(records), { status: 200 });
   } catch (error) {
