@@ -18,9 +18,9 @@ export async function GET() {
     });
 
     return NextResponse.json({ message: '✅ Admin user seeded' });
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Seeding error:', error);
-    return NextResponse.json({ error: '❌ Seeding failed' }, { status: 500 });
+    return NextResponse.json({ error: error.message || '❌ Seeding failed' }, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }
