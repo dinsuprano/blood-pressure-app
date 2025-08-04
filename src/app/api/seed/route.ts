@@ -1,27 +1,30 @@
-import { PrismaClient } from '@/generated/prisma';
-import bcrypt from 'bcrypt';
-import { NextResponse } from 'next/server';
+// prisma/seed.ts
+import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcrypt'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-export async function GET() {
-  try {
-    const hashedPassword = await bcrypt.hash('Intan226@', 10);
+async function main() {
+  const password = await bcrypt.hash("Intan226@", 10)
 
-    await prisma.user.upsert({
-      where: { email: 'dinsuprano@gmail.com' },
-      update: {},
-      create: {
-        email: 'dinsuprano@gmail.com',
-        password: hashedPassword,
-      },
-    });
-
-    return NextResponse.json({ message: '✅ Admin user seeded' });
-  } catch (error: any) {
-    console.error('❌ Seeding error:', error);
-    return NextResponse.json({ error: error.message || '❌ Seeding failed' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
+  await prisma.user.upsert({
+    where: { email: "dinsuprano@gmail.com" },
+    update: {},
+    create: {
+      email: "dinsuprano@gmail.com",
+      password,
+    },
+  })
 }
+
+main()
+  .then(() => {
+    console.log("✅ Seeded admin user")
+  })
+  .catch((e) => {
+    console.error("❌ Error seeding:", e)
+    process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
+  })
