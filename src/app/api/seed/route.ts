@@ -1,4 +1,5 @@
-import { PrismaClient } from '@/generated/prisma'; // or fix the path if needed
+// src/app/api/seed/route.ts
+import { PrismaClient } from '@/generated/prisma';
 import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -18,8 +19,8 @@ export async function GET() {
 
     return new Response('✅ Admin user seeded');
   } catch (error: any) {
-    console.error('❌ Seed error:', error);
-    return new Response(`❌ Seed failed: ${error.message}`, { status: 500 });
+    console.error('❌ Seeding error:', error);
+    return new Response(`❌ Seeding failed: ${error.message}`, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }
