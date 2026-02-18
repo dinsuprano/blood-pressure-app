@@ -14,7 +14,7 @@
     "@prisma/client": "^6.13.0",
     "@prisma/extension-accelerate": "^2.0.2",
     "bcrypt": "^6.0.0",
-    "next": "15.4.5",
+    "next": "15.4.10",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "xlsx": "^0.18.5"
@@ -29,5 +29,4 @@
     "tailwindcss": "^4",
     "typescript": "^5"
   }
-  
 }
